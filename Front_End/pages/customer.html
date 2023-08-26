@@ -21,10 +21,10 @@
     <ul class="list-group list-group-horizontal text-danger justify-content-end font-weight-bold">
         <li class="list-group-item bg-white" id="lnkHome"><a href="../index.html">Home</a></li>
         <li class="list-group-item bg-danger text-white" id="lnkCustomer"><a class="text-white"
-                                                                             href="/jsonp/pages/customer">Customer</a>
+                                                                             href="customer.html">Customer</a>
         </li>
-        <li class="list-group-item bg-white" id="lnkItem"><a href="/jsonp/pages/item">Item</a></li>
-        <li class="list-group-item bg-white" id="lnkOrders"><a href="purchase-order.jsp">Orders</a></li>
+        <li class="list-group-item bg-white" id="lnkItem"><a href="item.html">Item</a></li>
+        <li class="list-group-item bg-white" id="lnkOrders"><a href="purchase-order.html">Orders</a></li>
     </ul>
 </header>
 <!--customer content-->
@@ -88,6 +88,7 @@
 <script src="../assets/js/bootstrap.min.js"></script>
 <!--bind a event on btn GetAll btn-->
 <script>
+    let baseUrl ="http://localhost:8081/posApp/"
     getAllCustomers();
     $("#btnGetAll").click(function () {
         getAllCustomers();
@@ -95,7 +96,8 @@
     function getAllCustomers() {
         $("#tblCustomer").empty();
         $.ajax({
-            url: 'customer',
+            url: baseUrl+ 'customer',
+            data: formData,
             dataType: "json",
             success: function (customers) {
                 for (let i in customers) {
@@ -108,16 +110,39 @@
                     $("#tblCustomer").append(row);
                 }
                 bindRowClickEvents();
+                setTextFieldValues("", "", "", "");
             },
             error: function (error) {
                 console.log(error);
             }
         });
     }
+    function bindRowClickEvents() {
+        $("#tblCustomer>tr").click(function () {
+            let id = $(this).children(":eq(0)").text();
+            let name = $(this).children(":eq(1)").text();
+            let address = $(this).children(":eq(2)").text();
+            let salary = $(this).children(":eq(3)").text();
+
+            $('#txtCustomerID').val(id);
+            $('#txtCustomerName').val(name);
+            $('#txtCustomerAddress').val(address);
+            $('#txtCustomerSalary').val(salary);
+        });
+    }
+
+    //set text fields values function
+    function setTextFieldValues(id, name, address, salary) {
+        $('#txtCustomerID').val(id);
+        $('#txtCustomerName').val(name);
+        $('#txtCustomerAddress').val(address);
+        $('#txtCustomerSalary').val(salary);
+    }
+
     $("#btnCustomer").click(function (){
         let formData=$("#customerForm").serialize();
         $.ajax({
-            url:"customer?option=add",
+            url:baseUrl+"customer",
             method:"post",
             data:formData,
             success:function (res){
@@ -125,7 +150,7 @@
                 alert(res.message);
                 getAllCustomers();
             },
-            error:function (error){
+            error: function (error) {
                 console.log(error.responseJSON);
                 alert(error.responseJSON.message);
             }
@@ -142,8 +167,8 @@
                 getAllCustomers();
             },
             error:function (error){
-                console.log(error.responseJSON);
-                alert(error.responseJSON.message);
+                let message = JSON.parse(error.responseText).message;
+                alert(message);
             }
         });
     });

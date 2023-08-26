@@ -1,4 +1,5 @@
 package servlet;
+
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
@@ -10,49 +11,56 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
-@WebServlet(urlPatterns = {"/pages/customer"})
-public class CustomerServlet extends HttpServlet {
+
+
+@WebServlet(urlPatterns = "/pages/item")
+public class ItemServletAPI extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/posapi", "root", "1234");
-            PreparedStatement pstm = connection.prepareStatement("select * from Customer");
+            PreparedStatement pstm = connection.prepareStatement("select * from Item");
             ResultSet rst = pstm.executeQuery();
-            JsonArrayBuilder allCustomers = Json.createArrayBuilder();
+
+            JsonArrayBuilder allItems = Json.createArrayBuilder();
             while (rst.next()) {
-                JsonObjectBuilder customerObject = Json.createObjectBuilder();
-                customerObject.add("id", rst.getString(1));
-                customerObject.add("name", rst.getString(2));
-                customerObject.add("address", rst.getString(3));
-                customerObject.add("salary", rst.getString(4));
-                allCustomers.add(customerObject.build());
+                JsonObjectBuilder itemObject = Json.createObjectBuilder();
+                itemObject.add("code", rst.getString(1));
+                itemObject.add("description", rst.getString(2));
+                itemObject.add("qty", rst.getInt(3));
+                itemObject.add("unitPrice", rst.getDouble(4));
+                allItems.add(itemObject.build());
             }
-            resp.getWriter().print(allCustomers.build());
+            resp.getWriter().print(allItems.build());
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String cusID = req.getParameter("cusID");
-        String cusName = req.getParameter("cusName");
-        String cusAddress = req.getParameter("cusAddress");
-        String cusSalary = req.getParameter("cusSalary");
+
+        String code = req.getParameter("code");
+        String itemName = req.getParameter("description");
+        String qty = req.getParameter("qty");
+        String unitPrice = req.getParameter("unitPrice");
         String option = req.getParameter("option");
+//
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/posapi", "root", "1234");
             switch (option) {
                 case "add":
-                    PreparedStatement pstm = connection.prepareStatement("insert into Customer values(?,?,?,?)");
-                    pstm.setObject(1, cusID);
-                    pstm.setObject(2, cusName);
-                    pstm.setObject(3, cusAddress);
-                    pstm.setObject(4, cusSalary);
+                    PreparedStatement pstm = connection.prepareStatement("insert into Item values(?,?,?,?)");
+                    pstm.setObject(1, code);
+                    pstm.setObject(2, itemName);
+                    pstm.setObject(3, qty);
+                    pstm.setObject(4, unitPrice);
                     resp.addHeader("Content-Type", "application/json");
                     if (pstm.executeUpdate() > 0) {
                         JsonObjectBuilder response = Json.createObjectBuilder();
@@ -73,15 +81,14 @@ public class CustomerServlet extends HttpServlet {
             resp.getWriter().print(response.build());
         }
     }
-
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String id = req.getParameter("id");
+        String code = req.getParameter("code");
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/posapi", "root", "1234");
-            PreparedStatement pstm2 = connection.prepareStatement("delete from Customer where cusID=?");
-            pstm2.setObject(1, id);
+            PreparedStatement pstm2 = connection.prepareStatement("delete from Item where ItemCode=?");
+            pstm2.setObject(1, code);
             resp.addHeader("Content-Type", "application/json");
             if (pstm2.executeUpdate() > 0) {
                 JsonObjectBuilder response = Json.createObjectBuilder();
@@ -102,30 +109,27 @@ public class CustomerServlet extends HttpServlet {
             resp.getWriter().print(response.build());
         }
     }
-
-
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String cusId = req.getParameter("id");
-        String cusName = req.getParameter("name");
-        String cusAddress = req.getParameter("address");
-        String cusSalary = req.getParameter("salary");
-
+        String code = req.getParameter("code");
+        String itemName = req.getParameter("description");
+        String qty = req.getParameter("qty");
+        String unitPrice = req.getParameter("unitPrice");
         PrintWriter writer = resp.getWriter();
         try {
 
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/posapi", "root", "1234");
-            PreparedStatement pstm3 = connection.prepareStatement("update Customer set cusName=?,cusAddress=?,cusSalary=? where cusID=?");
-            pstm3.setObject(4, cusId);
-            pstm3.setObject(1, cusName);
-            pstm3.setObject(2, cusAddress);
-            pstm3.setObject(3, cusSalary);
+            PreparedStatement pstm3 = connection.prepareStatement("update Item set ItemName=?,UnitPrice=?,ItemQty=? where ItemCode=?");
+            pstm3.setObject(4, code);
+            pstm3.setObject(1, itemName);
+            pstm3.setObject(2, qty);
+            pstm3.setObject(3, unitPrice);
             if (pstm3.executeUpdate() > 0) {
                 resp.addHeader("Content-Type", "application/json");
                 JsonObjectBuilder cussAdd = Json.createObjectBuilder();
                 cussAdd.add("state", "200");
-                cussAdd.add("massage", " Customer Updated Sucsess");
+                cussAdd.add("massage", " Item Updated Sucsess");
                 cussAdd.add("data", "");
                 resp.setStatus(200);
                 writer.print(cussAdd.build());
@@ -144,4 +148,5 @@ public class CustomerServlet extends HttpServlet {
 
         }
     }
+
 }
