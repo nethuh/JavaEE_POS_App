@@ -1,8 +1,16 @@
 package servlet;
 
+import javax.json.*;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
-
-@WebServlet(urlPatterns = {"/Purchase-order"})
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+@WebServlet(urlPatterns = {"/placeOrder"})
 public class PurchaseOrderServletAPI extends HttpServlet {
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    }
 }
+

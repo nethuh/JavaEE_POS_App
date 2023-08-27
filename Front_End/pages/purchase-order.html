@@ -231,6 +231,56 @@
 
 <script src="../assets/js/jquery-3.7.0.min.js"></script>
 <script src="../assets/js/bootstrap.min.js"></script>
+<script>
 
+    var genarateOrderId = 0;
+
+
+    $("#txtOrderID").val('0-00' + (genarateOrderId += 1));
+
+    function loadCustomerIds() {
+        $("#selectCusID").empty();
+        $("#selectCusID").append($("<option></option>").attr("value", 0).text("Select ID"));
+
+        var countCustomerId = 1;
+
+        $.ajax({
+            url: "http://localhost:8081/posApp/Customer?option=GetAll",
+            method: "GET",
+            success: function (resp) {
+                for (let ids of resp) {
+                    $("#selectCusID").append($("<option></option>").attr("value", countCustomerId).text(ids.id));
+                    countCustomerId++;
+                    console.log(countCustomerId);
+                }
+
+                // Bind the event after options are loaded
+                $("#selectCusID").click(function () {
+                    loardCustomer();
+                });
+            },
+            error: function (ob, statusText, error) {
+            }
+        });
+    }
+    function loardCustomer() {
+        $.ajax({
+            url: "http://localhost:8081/posApp/Customer?option=search&cusID=" + $("#selectCusID option:selected").text(),
+            method: "GET",
+            success: function (response) {
+                $("#orderCustomerID").val(response.id);
+                $("#orderCustomerName").val(response.name);
+                $("#orderCustomerSalary").val(response.address);
+                $("#orderCustomerAddress").val(response.salary);
+            },
+            error: function (ob, statusText, error) {
+            }
+        });
+    }
+
+    // Call the function to start loading customer IDs
+    loadCustomerIds();
+
+</script>
 </body>
 </html>
