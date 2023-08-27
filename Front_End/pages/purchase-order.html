@@ -232,7 +232,7 @@
 <script src="../assets/js/jquery-3.7.0.min.js"></script>
 <script src="../assets/js/bootstrap.min.js"></script>
 <script>
-
+    let baseUrl="http://localhost:8081/posApp/";
     var genarateOrderId = 0;
 
 
@@ -245,7 +245,7 @@
         var countCustomerId = 1;
 
         $.ajax({
-            url: "http://localhost:8081/posApp/Customer?option=GetAll",
+            url: baseUrl+ "Customer?option=GetAll",
             method: "GET",
             success: function (resp) {
                 for (let ids of resp) {
@@ -265,7 +265,7 @@
     }
     function loardCustomer() {
         $.ajax({
-            url: "http://localhost:8081/posApp/Customer?option=search&cusID=" + $("#selectCusID option:selected").text(),
+            url:baseUrl+ "Customer?option=search&cusID=" + $("#selectCusID option:selected").text(),
             method: "GET",
             success: function (response) {
                 $("#orderCustomerID").val(response.id);
@@ -280,6 +280,55 @@
 
     // Call the function to start loading customer IDs
     loadCustomerIds();
+
+    function loadItemIds() {
+        $("#selectItemCode").empty();
+        $("#selectItemCode").append($("<option></option>").attr("value", 0).text("Select ID"));
+
+        var countItemId = 1;
+
+        $.ajax({
+            url: baseUrl+"Item?option=getAll",
+            method: "GET",
+            success: function (resp) {
+                for (let code of resp) {
+                    $("#selectItemCode").append($("<option></option>").attr("value", countItemId).text(code.code));
+                    countItemId++;
+                    console.log(countItemId);
+                }
+                // Bind the event after options are loaded
+                $("#selectItemCode").click(function () {
+                    loadItems();
+
+                });
+            },
+            error: function (ob, statusText, error) {
+            }
+        });
+
+    }
+
+    function loadItems() {
+        $.ajax({
+            url:baseUrl+ "Item?option=search&ItemCode=" + $("#selectItemCode option:selected").text(),
+            method: "GET",
+            success: function (resp) {
+                $("#txtItemCode").val(resp.code);
+                $("#txtItemDescription").val(resp.description);
+                $("#txtQTYOnHand").val(resp.qty);
+                $("#txtItemPrice").val(resp.unitPrice);
+
+
+                // console.log(resp);
+
+
+            },
+            error: function (ob, statusText, error) {
+            }
+        });
+    }
+
+    loadItemIds();
 
 </script>
 </body>

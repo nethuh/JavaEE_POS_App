@@ -15,92 +15,29 @@ import static java.lang.Class.forName;
 public class CustomerServletAPI extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        try {
-//            Class.forName("com.mysql.jdbc.Driver");
-//            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/posapi", "root", "1234");
-//            PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Customer");
-//            ResultSet rst = pstm.executeQuery();
-//            JsonArrayBuilder allCustomers = Json.createArrayBuilder();
-//
-//            while (rst.next()) {
-//                JsonObjectBuilder customer = Json.createObjectBuilder();
-//                customer.add("id", rst.getString("cusID"));
-//                customer.add("name", rst.getString("cusName"));
-//                customer.add("address", rst.getString("cusAddress"));
-//                customer.add("salary", rst.getDouble("cusSalary"));
-//                allCustomers.add(customer.build());
-//            }
-//            resp.addHeader("Content-Type","application/json");
-//            resp.addHeader("Access-Control-Allow-Origin","*");
-//
-//            JsonObjectBuilder job = Json.createObjectBuilder();
-//            job.add("state","OK");
-//            job.add("message","Successfully Loaded..!");
-//            job.add("data",allCustomers.build());
-//            resp.getWriter().print(job.build());
-//
-//        }catch (ClassNotFoundException | SQLException e){
-//            JsonObjectBuilder rjo = Json.createObjectBuilder();
-//            rjo.add("state","Error");
-//            rjo.add("message",e.getLocalizedMessage());
-//            rjo.add("data","");
-//            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//            resp.getWriter().print(rjo.build());
-//        }
-//    }
-
         try {
-            /*<!--when the response received catch it and set it to the table-->*/
 
+            /*<!--when the response received catch it and set it to the table-->*/
             forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/posapi", "root", "1234");
-
             String option = req.getParameter("option");
-
             switch (option) {
                 case "GetAll":
                     PreparedStatement pstm = connection.prepareStatement("select * from Customer");
                     ResultSet rst = pstm.executeQuery();
                     resp.addHeader("Access-Control-Allow-Origin", "*");
-
-
                     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
                     while (rst.next()) {
-                        String id = rst.getString(1);
-                        String name = rst.getString(2);
-                        String salary = rst.getString(3);
-                        String address = rst.getString(4);
-
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("id", id);
-                        objectBuilder.add("name", name);
-                        objectBuilder.add("salary", salary);
-                        objectBuilder.add("address", address);
-
-                        arrayBuilder.add(objectBuilder.build());
+                        JsonObjectBuilder customer = Json.createObjectBuilder();
+                        customer.add("id", rst.getString("cusID"));
+                        customer.add("name", rst.getString("cusName"));
+                        customer.add("address", rst.getString("cusAddress"));
+                        customer.add("salary", rst.getDouble("cusSalary"));
+                        arrayBuilder.add(customer.build());
                     }
                     resp.setContentType("application/json");
                     resp.getWriter().print(arrayBuilder.build());
                     break;
-
-                case "GetIds":
-                    PreparedStatement pstm2 = connection.prepareStatement("SELECT cusID FROM customer ORDER BY cusID DESC LIMIT 1;");
-                    ResultSet rst2 = pstm2.executeQuery();
-                    resp.addHeader("Access-Control-Allow-Origin", "*");
-
-                    //System.out.println("GetIds"+pstm2);
-
-                    JsonArrayBuilder arrayBuilder2 = Json.createArrayBuilder();
-                    while (rst2.next()) {
-                        String id = rst2.getString("id");
-                        int newCustomerId=Integer.parseInt(id.replace("C0-",""))+1;
-                        arrayBuilder2.add(newCustomerId);
-                    }
-                    resp.setContentType("application/json");
-                    resp.getWriter().print(arrayBuilder2.build());
-
-                    break;
-
                 case "search":
                     PreparedStatement pstm3 = connection.prepareStatement("select * from customer where cusID=?");
                     pstm3.setObject(1, req.getParameter("cusID"));

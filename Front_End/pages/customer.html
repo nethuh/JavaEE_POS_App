@@ -176,7 +176,8 @@
     function getAllCustomers() {
         $("#tblCustomer").empty();
         $.ajax({
-            url: baseUrl+"Customer",
+            url: baseUrl+"Customer?option=GetAll",
+            method: "GET",
             success: function (res) {
                 for (let c of res.data) {
                     let id = c.id;
