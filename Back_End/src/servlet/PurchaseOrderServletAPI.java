@@ -7,34 +7,76 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.*;
 
 import static java.lang.Class.forName;
 
 @WebServlet(urlPatterns = {"/placeOrder"})
 public class PurchaseOrderServletAPI extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            System.out.println("Before database connection");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/posapi", "root", "1234");
+            System.out.println("After database connection");
+            PreparedStatement pstm = connection.prepareStatement("select * from orders");
+            ResultSet rst = pstm.executeQuery();
+            PrintWriter writer = resp.getWriter();
+            resp.setHeader("Access-Control-Allow-Origin", "*");
+            resp.setHeader("Content-Type", "application/json");
+            JsonArrayBuilder allCustomers = Json.createArrayBuilder();
+
+
+            while (rst.next()) {
+                String orderID = rst.getString(1);
+                String orderCusID = rst.getString(2);
+                String orderDate = rst.getString(3);
+//                String orderTotal = String.valueOf(rst.getInt(4));
+
+                JsonObjectBuilder customer = Json.createObjectBuilder();
+
+                customer.add("order_ID", orderID);
+                customer.add("customer_ID", orderCusID);
+                customer.add("date", orderDate);
+//                customer.add("contact",contact);
+
+                allCustomers.add(customer.build());
+            }
+
+
+            writer.print(allCustomers.build());
+
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         JsonReader reader = Json.createReader(req.getReader());
         JsonObject jsonObject = reader.readObject();
 
+        resp.addHeader("Content-Type", "application/json");
         resp.addHeader("Access-Control-Allow-Origin", "*");
 
         String orderId = jsonObject.getString("order_ID");
         String orderDate = jsonObject.getString("date");
-        String customerId = jsonObject.getString("customer_ID");
+        String customerId = jsonObject.getString("Customer_ID");
         String itemCode = jsonObject.getString("ItemCode");
         String qty = jsonObject.getString("qty");
         String unitPrice = jsonObject.getString("unitPrice");
         JsonArray orderDetails = jsonObject.getJsonArray("orderDetails");
 
-        for (int i = 0; i < orderDetails.size(); i++) {
-
-            System.out.println(orderDetails.getJsonArray(i).getString(0));
-        }
-
         try {
-            forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/posapi", "root", "1234");
             connection.setAutoCommit(false);
 
@@ -47,15 +89,15 @@ public class PurchaseOrderServletAPI extends HttpServlet {
             if (affectedRows == 0) {
                 connection.rollback();
                 throw new RuntimeException("Failed to save the order");
-            }else {
+            } else {
                 System.out.println("Order Saved");
 
             }
 
 
             PreparedStatement orderDetailStatement = connection.prepareStatement("INSERT INTO order_detail VALUES(?,?,?,?)");
-            orderDetailStatement.setString(1,itemCode );
-            orderDetailStatement.setString(2, orderId);
+            orderDetailStatement.setString(1, orderId);
+            orderDetailStatement.setString(2, itemCode);
             orderDetailStatement.setString(3, qty);
             orderDetailStatement.setString(4, unitPrice);
 
@@ -63,10 +105,9 @@ public class PurchaseOrderServletAPI extends HttpServlet {
             if (affectedRows == 0) {
                 connection.rollback();
                 throw new RuntimeException("Failed to save the order details");
-            }else {
+            } else {
                 System.out.println("Order Details Saved");
             }
-
 
 
             connection.commit();
@@ -77,7 +118,7 @@ public class PurchaseOrderServletAPI extends HttpServlet {
             resp.getWriter().print(objectBuilder.build());
 
 
-        }catch (ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         } catch (SQLException e) {
             JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
@@ -87,15 +128,13 @@ public class PurchaseOrderServletAPI extends HttpServlet {
             resp.getWriter().print(objectBuilder.build());
 
         }
-
     }
 
 
     @Override
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.addHeader("Access-Control-Allow-Origin", "*");
-        resp.addHeader("Access-Control-Allow-Headers", "Content-Type");
-        resp.addHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");
+        resp.setHeader("Access-Control-Allow-Origin", "*");
+        resp.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        resp.setHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin");
     }
 }
-
