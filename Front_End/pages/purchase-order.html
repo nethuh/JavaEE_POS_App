@@ -330,6 +330,34 @@
 
     loadItemIds();
 
+    $("#btnAddToTable").click(function () {
+        let itemCode = $("#txtItemCode").val();
+        let itemDescription = $("#txtItemDescription").val();
+        let itemPrice = $("#txtItemPrice").val();
+        let itemQty = $("#txtQty").val();
+
+        let cartItemsRow = [];
+
+        let total = itemPrice * itemQty;
+
+        cartItemsRow.push(itemCode, itemDescription, itemPrice, itemQty, total);
+
+        let text = "Successfully Added..!";
+
+        if (confirm(text) == true) {
+            let row = `<tr>
+                <td>${itemCode}</td>
+                <td>${itemDescription}</td>
+                <td>${itemPrice}</td>
+                <td>${itemQty}</td>
+                <td>${total}</td>
+            </tr>`;
+
+            $("#orderTable").append(row);
+        }
+    });
+
+
 </script>
 </body>
 </html>

@@ -14,9 +14,6 @@ import java.sql.*;
 @WebServlet(urlPatterns = "/Item")
 public class ItemServletAPI extends HttpServlet {
 
-    //    query string
-    //    form Data (x-www-form-urlencoded)
-//    JSON
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
