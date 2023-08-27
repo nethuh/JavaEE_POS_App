@@ -32,16 +32,14 @@ public class PurchaseOrderServletAPI extends HttpServlet {
 
             while (rst.next()) {
                 String orderID = rst.getString(1);
-                String orderCusID = rst.getString(2);
                 String orderDate = rst.getString(3);
-//                String orderTotal = String.valueOf(rst.getInt(4));
+                String orderCusID = rst.getString(2);
 
                 JsonObjectBuilder customer = Json.createObjectBuilder();
 
                 customer.add("order_ID", orderID);
-                customer.add("customer_ID", orderCusID);
                 customer.add("date", orderDate);
-//                customer.add("contact",contact);
+                customer.add("customer_ID", orderCusID);
 
                 allCustomers.add(customer.build());
             }
@@ -69,7 +67,7 @@ public class PurchaseOrderServletAPI extends HttpServlet {
 
         String orderId = jsonObject.getString("order_ID");
         String orderDate = jsonObject.getString("date");
-        String customerId = jsonObject.getString("Customer_ID");
+        String customerId = jsonObject.getString("customer_ID");
         String itemCode = jsonObject.getString("ItemCode");
         String qty = jsonObject.getString("qty");
         String unitPrice = jsonObject.getString("unitPrice");
