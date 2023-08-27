@@ -179,40 +179,19 @@
                 for (let i = 0; i < data.length; i++) {
                     let code = data[i].code;
                     let description = data[i].description;
-                    let qtyOnHand = data[i].qtyOnHand;
                     let unitPrice = data[i].unitPrice;
+                    let qtyOnHand = data[i].qtyOnHand;
 
-                    let row = "<tr><td>" + code + "</td><td>" + description + "</td><td>" + qtyOnHand + "</td><td>" + unitPrice + "</td></tr>";
+
+                    let row = "<tr><td>" + code + "</td><td>" + description + "</td><td>" + unitPrice + "</td><td>" + qtyOnHand + "</td></tr>";
                     $("#tblItem").append(row);
                 }
-                bindRowClickEvents();
-                setTextFieldValues("", "", "", "");
+
             },
         });
     }
 
-    //bind events for the table rows function
-    function bindRowClickEvents() {
-        $("#tblItem>tr").click(function () {
-            let code = $(this).children(":eq(0)").text();
-            let description = $(this).children(":eq(1)").text();
-            let qtyOnHand = $(this).children(":eq(2)").text();
-            let unitPrice = $(this).children(":eq(3)").text();
 
-            $('#itemCode').val(code);
-            $('#itemName').val(description);
-            $('#itemQty').val(qtyOnHand);
-            $('#itemPrice').val(unitPrice);
-        });
-    }
-
-    //set text fields values function
-    function setTextFieldValues(code, description, qtyOnHand, unitPrice) {
-        $('#itemCode').val(code);
-        $('#itemName').val(description);
-        $('#itemQty').val(qtyOnHand);
-        $('#itemPrice').val(unitPrice);
-    }
 
 </script>
 </body>

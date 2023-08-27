@@ -32,8 +32,8 @@ public class ItemServletAPI extends HttpServlet {
                         JsonObjectBuilder itemObject = Json.createObjectBuilder();
                         itemObject.add("code", rst.getString(1));
                         itemObject.add("description", rst.getString(2));
-                        itemObject.add("qty", rst.getInt(3));
-                        itemObject.add("unitPrice", rst.getDouble(4));
+                        itemObject.add("unitPrice", rst.getBigDecimal(3));
+                        itemObject.add("qty", rst.getInt(4));
                         arrayBuilder.add(itemObject.build());
                     }
                     resp.setContentType("application/json");
@@ -52,13 +52,15 @@ public class ItemServletAPI extends HttpServlet {
                     if (rst2.next()) {
                         String ids = rst2.getString(1);
                         String description = rst2.getString(2);
-                        String qty = rst2.getString(3);
-                        String unitPrice = rst2.getString(4);
+                       String unitPrice = rst2.getString(3);
+                        String qty = rst2.getString(4);
+
 
                         objectBuilder1.add("code", ids);
                         objectBuilder1.add("description", description);
                         objectBuilder1.add("unitPrice", unitPrice);
                         objectBuilder1.add("qty", qty);
+
 
                     }
                     resp.setContentType("application/json");
@@ -87,8 +89,8 @@ public class ItemServletAPI extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String code = req.getParameter("code");
         String description = req.getParameter("description");
-        String qtyOnHand = req.getParameter("qtyOnHand");
         String unitPrice = req.getParameter("unitPrice");
+        String qtyOnHand = req.getParameter("qtyOnHand");
         resp.addHeader("Access-Control-Allow-Origin","*");
 
         try {
@@ -98,8 +100,8 @@ public class ItemServletAPI extends HttpServlet {
             PreparedStatement pstm = connection.prepareStatement("insert into Item values(?,?,?,?)");
             pstm.setObject(1,code);
             pstm.setObject(2,description);
-            pstm.setObject(3,qtyOnHand);
-            pstm.setObject(4,unitPrice);
+            pstm.setObject(3,unitPrice);
+            pstm.setObject(4,qtyOnHand);
             boolean b = pstm.executeUpdate() > 0;
             if (b){
                 JsonObjectBuilder responseObject = Json.createObjectBuilder();
