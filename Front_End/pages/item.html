@@ -178,12 +178,12 @@
             success: function (data) {
                 for (let i = 0; i < data.length; i++) {
                     let code = data[i].code;
-                    let description = data[i].description;
-                    let unitPrice = data[i].unitPrice;
-                    let qtyOnHand = data[i].qtyOnHand;
+                    let desc = data[i].description;
+                    let qty = data[i].qty;
+                    let price = data[i].unitPrice;
 
 
-                    let row = "<tr><td>" + code + "</td><td>" + description + "</td><td>" + unitPrice + "</td><td>" + qtyOnHand + "</td></tr>";
+                    let row = `<tr><td>${code}</td><td>${desc}</td><td>${qty}</td><td>${price}</td></tr>`;
                     $("#tblItem").append(row);
                 }
 

@@ -32,8 +32,8 @@ public class ItemServletAPI extends HttpServlet {
                         JsonObjectBuilder itemObject = Json.createObjectBuilder();
                         itemObject.add("code", rst.getString(1));
                         itemObject.add("description", rst.getString(2));
-                        itemObject.add("unitPrice", rst.getBigDecimal(3));
-                        itemObject.add("qty", rst.getInt(4));
+                        itemObject.add("qty", rst.getInt(3));
+                        itemObject.add("unitPrice", rst.getDouble(4));
                         arrayBuilder.add(itemObject.build());
                     }
                     resp.setContentType("application/json");
