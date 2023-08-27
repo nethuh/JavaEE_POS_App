@@ -173,13 +173,14 @@
     function getAllItems() {
         $("#tblItem").empty();
         $.ajax({
-            url: baseUrl+"Item",
-            success: function (res) {
-                for (let c of res.data) {
-                    let code = c.code;
-                    let description = c.description;
-                    let qtyOnHand = c.qtyOnHand;
-                    let unitPrice = c.unitPrice;
+            url: baseUrl+"Item?option=getAll",
+            method:"GET",
+            success: function (data) {
+                for (let i = 0; i < data.length; i++) {
+                    let code = data[i].code;
+                    let description = data[i].description;
+                    let qtyOnHand = data[i].qtyOnHand;
+                    let unitPrice = data[i].unitPrice;
 
                     let row = "<tr><td>" + code + "</td><td>" + description + "</td><td>" + qtyOnHand + "</td><td>" + unitPrice + "</td></tr>";
                     $("#tblItem").append(row);
@@ -187,10 +188,6 @@
                 bindRowClickEvents();
                 setTextFieldValues("", "", "", "");
             },
-            error: function (error) {
-                let message = JSON.parse(error.responseText).message;
-                alert(message);
-            }
         });
     }
 

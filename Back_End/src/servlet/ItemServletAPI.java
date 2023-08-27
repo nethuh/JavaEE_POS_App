@@ -29,20 +29,15 @@ public class ItemServletAPI extends HttpServlet {
                     PreparedStatement pstm = connection.prepareStatement("select * from Item");
                     ResultSet rst = pstm.executeQuery();
                     resp.addHeader("Access-Control-Allow-Origin", "*");
-
                     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-                    while (rst.next()) {
-                        String code = rst.getString(1);
-                        String description = rst.getString(2);
-                        String qty = rst.getString(3);
-                        String unitPrice = rst.getString(4);
 
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("code", code);
-                        objectBuilder.add("description", description);
-                        objectBuilder.add("qty", qty);
-                        objectBuilder.add("unitPrice", unitPrice);
-                        arrayBuilder.add(objectBuilder.build());
+                    while (rst.next()) {
+                        JsonObjectBuilder itemObject = Json.createObjectBuilder();
+                        itemObject.add("code", rst.getString(1));
+                        itemObject.add("description", rst.getString(2));
+                        itemObject.add("qty", rst.getInt(3));
+                        itemObject.add("unitPrice", rst.getDouble(4));
+                        arrayBuilder.add(itemObject.build());
                     }
                     resp.setContentType("application/json");
                     resp.getWriter().print(arrayBuilder.build());
