@@ -30,7 +30,6 @@ public class ItemServletAPI extends HttpServlet {
                     ResultSet rst = pstm.executeQuery();
                     resp.addHeader("Access-Control-Allow-Origin", "*");
 
-
                     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
                     while (rst.next()) {
                         String code = rst.getString(1);

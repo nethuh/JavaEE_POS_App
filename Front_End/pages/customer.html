@@ -178,22 +178,18 @@
         $.ajax({
             url: baseUrl+"Customer?option=GetAll",
             method: "GET",
-            success: function (res) {
-                for (let c of res.data) {
-                    let id = c.id;
-                    let name = c.name;
-                    let address = c.address;
-                    let salary = c.salary;
+            success: function (cus) {
+                for (let i = 0; i < cus.length; i++) {
+                    let id = cus[i].id;
+                    let name = cus[i].name;
+                    let address = cus[i].address;
+                    let salary = cus[i].salary;
                     let row = `<tr><td>${id}</td><td>${name}</td><td>${address}</td><td>${salary}</td></tr>`;
                     $("#tblCustomer").append(row);
                 }
                 bindRowClickEvents();
                 setTextFieldValues("", "", "", "");
             },
-            error: function (error) {
-                let message = JSON.parse(error.responseText).message;
-                alert(message);
-            }
         });
     }
 

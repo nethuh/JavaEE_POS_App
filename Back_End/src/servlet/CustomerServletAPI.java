@@ -23,20 +23,22 @@ public class CustomerServletAPI extends HttpServlet {
             String option = req.getParameter("option");
             switch (option) {
                 case "GetAll":
-                    PreparedStatement pstm = connection.prepareStatement("select * from Customer");
+                    PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Customer");
                     ResultSet rst = pstm.executeQuery();
-                    resp.addHeader("Access-Control-Allow-Origin", "*");
-                    JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+                    JsonArrayBuilder allCustomers = Json.createArrayBuilder();
+                    resp.addHeader("Access-Control-Allow-Origin","*");
+
                     while (rst.next()) {
                         JsonObjectBuilder customer = Json.createObjectBuilder();
                         customer.add("id", rst.getString("cusID"));
                         customer.add("name", rst.getString("cusName"));
                         customer.add("address", rst.getString("cusAddress"));
                         customer.add("salary", rst.getDouble("cusSalary"));
-                        arrayBuilder.add(customer.build());
+                        allCustomers.add(customer.build());
                     }
                     resp.setContentType("application/json");
-                    resp.getWriter().print(arrayBuilder.build());
+                    resp.getWriter().print(allCustomers.build());
+
                     break;
                 case "search":
                     PreparedStatement pstm3 = connection.prepareStatement("select * from customer where cusID=?");
