@@ -421,48 +421,51 @@
         });
     }
     let orderDetails;
-    $(document).ready(function () {
-        $("#btnSubmitOrder").click(function () {
-            let orderId = $("#txtOrderID").val();
-            let orderDate = $("#txtDate").val();
-            let itemId = $("#orderItemCode").val();
-            let customerId = $("#orderCustomerID").val();
-            let qty = $("#txtQty").val();
-            let unitPrice = $("#orderItemPrice").val();
-            let cartItems = orderDetails;
+    /*$(document).ready(function () {
 
-            let order = {
-                "order_ID": orderId,
-                "date": orderDate,
-                "Customer_ID": customerId, // Correct field name
-                "ItemCode": itemId, // Correct field name
-                "qty": qty,
-                "unitPrice": unitPrice,
-                "orderDetails": cartItems
-            }
 
-            $.ajax({
-                url: baseUrl+"placeOrder",
-                method: "POST",
-                contentType: "application/json",
-                headers: { "Access-Control-Allow-Origin": "*" },
-                data: JSON.stringify(order),
-                success: function (resp) {
-                    updateQtyOnHandRow();
-                    if (resp && resp.status === 200) {
-                        alert("Order has been saved successfully");
-                    } else {
-                        alert("Failed to save the order");
-                    }
-                },
-                error: function (ob, statusText, error) {
-                    alert(error);
+    });*/
+
+
+    $("#btnSubmitOrder").click(function () {
+        let orderId = $("#txtOrderID").val();
+        let orderDate = $("#txtDate").val();
+        let itemId = $("#orderItemCode").val();
+        let customerId = $("#orderCustomerID").val();
+        let qty = $("#txtQty").val();
+        let unitPrice = $("#orderItemPrice").val();
+        let cartItems = orderDetails;
+
+        let order = {
+            order_ID: orderId,
+            date: orderDate,
+            customer_ID: customerId,
+            ItemCode: itemId,
+            qty: qty,
+            unitPrice: unitPrice,
+            order_detail: cartItems
+        }
+
+        console.log(order);
+
+        $.ajax({
+            url: baseUrl+"placeOrder",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(order),
+            success: function (resp) {
+                updateQtyOnHandRow();
+                if (resp && resp.status === 200) {
+                    alert("Order has been saved successfully");
+                } else {
+                    alert("Failed to save the order");
                 }
-            });
+            },
+            error: function (ob, statusText, error) {
+                alert(error);
+            }
         });
-
     });
-
 
 </script>
 </body>

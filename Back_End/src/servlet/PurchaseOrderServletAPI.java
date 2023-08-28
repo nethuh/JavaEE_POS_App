@@ -13,7 +13,7 @@ import java.sql.*;
 import static java.lang.Class.forName;
 
 @WebServlet(urlPatterns = {"/placeOrder"})
-public class PurchaseOrderServletAPI extends HttpServlet {
+public class  PurchaseOrderServletAPI extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
